@@ -47,6 +47,7 @@ def evaluate_ATC():
     while (i<n):
         if("Distressed" in newlist[i] and newlist[i]["Distressed"]=="true"):
             #traceback RT, drop and add behind
+            del newlist[i]["Distressed"]
             print('Trigger distress')
             for j in range(i-1,-1,-1):
                 print(newlist[i]["Time"],newlist[j]["Time"])
