@@ -3,6 +3,8 @@ from flask import request, jsonify
 
 from codeitsuisse import app
 
+from decimal import *
+
 answer = {
     "transactions": []
 }
@@ -17,6 +19,7 @@ def evaluate_tally_expense():
     N = len(data.get("persons"))
     ppl = data.get("persons")
     table = form_table(data.get("expenses"),data.get("persons"))
+    print(table)
     minCashFlow(table,ppl,N)
 
     result = answer
@@ -38,7 +41,7 @@ def form_table(expenses, people):
                 owe_money.remove(name)
 
             # owed = float(round(Decimal(expense["amount"]/(len(owe_money))-1),2))
-            owed = round(float((expense["amount"]/(len(owe_money))-1)),2)
+            owed = round(Decimal((expense["amount"]/(len(owe_money))-1)),2)
 
             for i in range(len(owe_money)):
                 if i == index_paidBy:
@@ -49,7 +52,7 @@ def form_table(expenses, people):
 
         else:
             # owed = float(round(Decimal(expense["amount"]/(len(people)-1)),2))
-            owed = round(float(expense["amount"]/(len(people)-1)),2)
+            owed = round(Decimal(expense["amount"]/(len(people)-1)),2)
 
             for i in range(len(people)):
                 if i == index_paidBy:
@@ -85,26 +88,25 @@ def minCashFlowRec(amount,ppl,N):
     mxCredit = getMax(amount,N)
     mxDebit = getMin(amount,N)
 
-    print(mxCredit)
-    print(mxDebit)
-
+    print('Amount is:',amount)
     # Terminating case
-    if (amount[mxCredit] == 0 and amount[mxDebit] == 0):
+    if (amount[mxCredit] == 0.0 and amount[mxDebit] == 0.0):
         return 0
 
     # Find the minimum of two amounts
     min = minOf2(-amount[mxDebit], amount[mxCredit])
-    amount[mxCredit] -=min
-    amount[mxDebit] += min
+    amount[mxCredit] -= round(min,2)
+    amount[mxDebit] += round(min,2)
 
+    print(min)
     final_paid = round(min,2)
     # # If minimum is the maximum amount to be
-    # print("Person " , mxDebit , " pays " , final_paid
-    #     , " to " , "Person " , mxCredit)
+    print("Person " , mxDebit , " pays " , final_paid
+        , " to " , "Person " , mxCredit)
     transaction = {
         "from": ppl[mxDebit],
         "to": ppl[mxCredit],
-        "amount": final_paid
+        "amount": float(final_paid)
     }
     answer["transactions"].append(transaction)
 
@@ -118,6 +120,10 @@ def minCashFlow(graph,ppl,N):
         for i in range(N):
             net_amount[p] += (graph[i][p] - graph[p][i])
 
+    for i in range(len(net_amount)):
+        net_amount[i] = round(net_amount[i],2)
+
+    print("net amount is",net_amount)
     minCashFlowRec(net_amount,ppl,N)
 
 
