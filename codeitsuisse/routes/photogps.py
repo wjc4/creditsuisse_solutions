@@ -18,9 +18,16 @@ def photogps():
     data = request.get_json()
     app.logger.info("data sent for evaluation {}".format(data))
     result = []
-    for link in data:
+    history=[]
+    for i in range(len(data)):
+    # for link in data:
         # app.logger.info(link['path']) #geturl
-        url = link['path']
+        url = data[i]['path']
+        if url in history:
+            result.append(result[history.index(url)])
+            history.append(url)
+            continue
+        history.append(url)
         local_filename, headers = urllib.request.urlretrieve(url)
         resource = open(local_filename, 'rb')
         # app.logger.info(resource)
