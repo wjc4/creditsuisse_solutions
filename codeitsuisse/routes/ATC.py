@@ -46,45 +46,45 @@ def evaluate_ATC():
     back_count=0
     distress = []
 
-    for flight in newlist:
-        if("Distressed" in flight and flight["Distressed"]=="true"):
-            newlist.remove(flight)
-            del flight["Distressed"]
-            distress.append(flight)
-
-
-
-    distress+=(newlist)
-
-    newlist = distress
-    print("yo"); print(distress)
+    # for flight in newlist:
+    #     if("Distressed" in flight and flight["Distressed"]=="true"):
+    #         newlist.remove(flight)
+    #         del flight["Distressed"]
+    #         distress.append(flight)
+    #
+    #
+    #
+    # distress+=(newlist)
+    #
+    # newlist = distress
+    # print("yo"); print(distress)
 
 
     while (i<n):
-        print(newlist[i]["Time"])
+        # print(newlist[i]["Time"])
 
 
-        # if("Distressed" in newlist[i] and newlist[i]["Distressed"]=="true"):
-        #     #traceback RT, drop and add behind
-        #     del newlist[i]["Distressed"]
-        #     print('Trigger distress')
-        #     for j in range(i-1,-1,-1):
-        #         print(newlist[i]["Time"],newlist[j]["Time"])
-        #         if(get_min(newlist[j+1]["Time"]) - get_min(newlist[j]["Time"]) < RT):
-        #             newlist[j]["Time"]=plusRT(newlist[j+1]["Time"],RT)
-        #             print("RTTTTT",newlist[j]["Time"])
-        #             tmp = newlist[j]
-        #             for runway in runways:
-        #                 if(runway["name"]==newlist[j]["Runway"]):
-        #                     runway["occupied"] = False
-        #                     runway["release-time"] = "0000"
-        #             newlist[j] = newlist[j+1]
-        #             newlist[j+1] = tmp
-        #
-        #             back_count+=1
-        #             print('isnide')
-        #
-        #     i=i-back_count
+        if("Distressed" in newlist[i] and newlist[i]["Distressed"]=="true"):
+            #traceback RT, drop and add behind
+            del newlist[i]["Distressed"]
+            print('Trigger distress')
+            for j in range(i-1,-1,-1):
+                print(newlist[i]["Time"],newlist[j]["Time"])
+                if(get_min(newlist[j+1]["Time"]) - get_min(newlist[j]["Time"]) < RT):
+                    newlist[j]["Time"]=plusRT(newlist[j+1]["Time"],RT)
+                    print("RTTTTT",newlist[j]["Time"])
+                    tmp = newlist[j]
+                    for runway in runways:
+                        if(runway["name"]==newlist[j]["Runway"]):
+                            runway["occupied"] = False
+                            runway["release-time"] = "0000"
+                    newlist[j] = newlist[j+1]
+                    newlist[j+1] = tmp
+
+                    back_count+=1
+                    print('isnide')
+
+            i=i-back_count
 
         print("i=",i)
         print(newlist[i]["Time"])
