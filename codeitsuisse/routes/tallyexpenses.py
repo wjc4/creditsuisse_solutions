@@ -3,8 +3,9 @@ from flask import request, jsonify
 
 from codeitsuisse import app
 
-N = len(data['persons'])
-ppl = data['persons']
+input_data = {}
+N = len(input_data['persons'])
+ppl = input_data['persons']
 answer = {
     "transactions": []
 }
@@ -115,12 +116,14 @@ def minCashFlow(graph):
 
 @app.route('/tally-expense', methods=['POST'])
 def evaluate_primes():
+    global input_data
+
     # JSON mode
     data = request.get_json();
     app.logger.info("data sent for evaluation {}".format(data))
-    inputValue = data.get("input");
+    input_data = data.get("input");
 
-    table = form_table(inputValue)
+    table = form_table(input_data)
     minCashFlow(table)
 
     result = answer
