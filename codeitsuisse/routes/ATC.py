@@ -15,6 +15,7 @@ def evaluate_ATC():
 
     # To return a new list, use the sorted() built-in function...
     newlist = sorted(data["Flights"], key=lambda x: (x["Time"],x["PlaneId"]))
+    print("sorted",newlist)
 
     RT = int(int(data["Static"]["ReserveTime"])/60)
 
@@ -51,16 +52,16 @@ def evaluate_ATC():
             print('Trigger distress')
             for j in range(i-1,-1,-1):
                 print(newlist[i]["Time"],newlist[j]["Time"])
-                if(get_min(newlist[i]["Time"]) - get_min(newlist[j]["Time"]) < RT):
-                    newlist[j]["Time"]=plusRT(newlist[i]["Time"],RT)
+                if(get_min(newlist[j+1]["Time"]) - get_min(newlist[j]["Time"]) < RT):
+                    newlist[j]["Time"]=plusRT(newlist[j+1]["Time"],RT)
                     print("RTTTTT",newlist[j]["Time"])
                     tmp = newlist[j]
                     for runway in runways:
                         if(runway["name"]==newlist[j]["Runway"]):
                             runway["occupied"] = False
                             runway["release-time"] = "0000"
-                    newlist[j] = newlist[i]
-                    newlist[i] = tmp
+                    newlist[j] = newlist[j+1]
+                    newlist[j+1] = tmp
 
                     back_count+=1
                     print('isnide')
@@ -71,7 +72,7 @@ def evaluate_ATC():
         print(newlist[i])
 
 
-
+        print(runways)
 
         for runway in runways:
             # print(get_min(newlist[i]["Time"]) - get_min(runway["release-time"]))
@@ -89,7 +90,10 @@ def evaluate_ATC():
             print("i=",i)
             newlist[i]["Time"] = runways[min]["release-time"]
             newlist[i]["Runway"] = runways[min]["name"]
+            print("1. ",runways[min]["release-time"])
             runways[min]["release-time"] = plusRT(runways[min]["release-time"],RT)
+            print("2. ",runways[min]["release-time"])
+            print("rt:",runways[min]["release-time"])
 
         for runway in runways:
             if(runway["occupied"] == False):
