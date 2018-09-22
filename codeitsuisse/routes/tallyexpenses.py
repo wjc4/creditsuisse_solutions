@@ -14,12 +14,11 @@ def evaluate_tally_expense():
     # JSON mode
     data = request.get_json();
     app.logger.info("data sent for evaluation {}".format(data))
-    input_data = data.get("input");
 
     N = len(data.get("persons"))
     ppl = data.get("persons")
     table = form_table(data.get("expenses"),data.get("persons"))
-    print(table)
+    # print(table)
     minCashFlow(table,ppl,N)
 
     result = answer
@@ -88,7 +87,7 @@ def minCashFlowRec(amount,ppl,N):
     mxCredit = getMax(amount,N)
     mxDebit = getMin(amount,N)
 
-    print('Amount is:',amount)
+    # print('Amount is:',amount)
     # Terminating case
     if (amount[mxCredit] == 0.0 and amount[mxDebit] == 0.0):
         return 0
@@ -98,11 +97,11 @@ def minCashFlowRec(amount,ppl,N):
     amount[mxCredit] -= round(min,2)
     amount[mxDebit] += round(min,2)
 
-    print(min)
+    # print(min)
     final_paid = round(min,2)
     # # If minimum is the maximum amount to be
-    print("Person " , mxDebit , " pays " , final_paid
-        , " to " , "Person " , mxCredit)
+    # print("Person " , mxDebit , " pays " , final_paid
+    #     , " to " , "Person " , mxCredit)
     transaction = {
         "from": ppl[mxDebit],
         "to": ppl[mxCredit],
@@ -123,7 +122,7 @@ def minCashFlow(graph,ppl,N):
     for i in range(len(net_amount)):
         net_amount[i] = round(net_amount[i],2)
 
-    print("net amount is",net_amount)
+    # print("net amount is",net_amount)
     minCashFlowRec(net_amount,ppl,N)
 
 
