@@ -7,7 +7,7 @@ from codeitsuisse import app
 # logger = logging.getLogger(__name__)
 
 import itertools
-import numpy as np
+# import numpy as np
 
 @app.route('/two-dinosaurs', methods=['POST'])
 def dino2():
