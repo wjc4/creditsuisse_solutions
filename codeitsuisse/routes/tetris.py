@@ -17,10 +17,59 @@ def tetris_evaluate():
 
     n = len(seq)
 
-    # challenge 1
+    # # challenge 1
+    # for i in range(n):
+    #     shift = (i%5)* 2
+    #     actions.append(shift)
+
+    # challenge 2
+    J_count = 0
+    L_count = 0
     for i in range(n):
-        shift = (i%5)* 2
-        actions.append(shift)
+        rotate = 0
+        shift = 0
+        if(seq[i]=="J"):
+            if(int(J_count/3)%2==0):
+                shift = J_count%3 * 2
+            else:
+                rotate = 2
+                shift = J_count%3 * 2
+            J_count += 1
+        else:
+            offset = 6
+            if(int(L_count/2)%2==0):
+                shift = (L_count%2 * 2) + offset
+            else:
+                rotate = 2
+                shift = (L_count%2 * 2) + offset
+            L_count+=1
+
+        if(rotate!=0):
+            actions.append(int(str(rotate)+str(shift)))
+        else:
+            actions.append(shift)
+
+    #challenge 3
+    # O_count = 0
+    # I_count = 0
+    # for i in range(n):
+    #     rotate = 0
+    #     shift = 0
+    #     if(seq[i]=="O"):
+    #         shift = J_count%3 * 2
+    #         O_count += 1
+    #     else:
+    #         offset = 6
+    #         if(int(L_count/4)%2 ==0):
+    #             shift = (L_count%4 * 1) + offset
+    #         else:
+    #             shift = (L_count%4 * 1) + offset
+    #         I_count+=1
+    #
+    #     if(rotate!=0):
+    #         actions.append(int(str(rotate)+str(shift)))
+    #     else:
+    #         actions.append(shift)
 
 
     print("Final actions are as follows: ",actions)
