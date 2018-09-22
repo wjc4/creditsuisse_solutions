@@ -1,10 +1,21 @@
 # import logging
 
 from flask import request, jsonify
+from collections import defaultdict
 
 from codeitsuisse import app
 
-all_paths = []
+class Graph():
+    def __init__(self):
+        self.edges = defaultdict(list)
+        self.weights = {}
+
+    def add_edge(self, from_node, to_node, weight):
+        # Note: assumes edges are bi-directional
+        self.edges[from_node].append(to_node)
+        self.edges[to_node].append(from_node)
+        self.weights[(from_node, to_node)] = weight
+        self.weights[(to_node, from_node)] = weight
 
 @app.route('/broadcaster/fastest-path', methods=['POST'])
 def eval_broadcast_fastpath():
@@ -13,125 +24,55 @@ def eval_broadcast_fastpath():
     input_data = data.get("data")
     sender = data.get("sender")
     recipient = data.get("recipient")
-    result = fastpath(input_data,sender,recipient)
+    result_input = fastpath(input_data,sender,recipient)
+    result = {
+        "result": result_input
+    }
     app.logger.info("My result :{}".format(result))
     return jsonify(result)
 
 def fastpath(data,start,dst):
-    global all_paths
-
-    node = {}
+    graph = Graph()
     for relationships in data:
         rs = relationships.replace("->"," ").replace(","," ").split()
-        # print(rs)
-        if rs[0] in node:
-            node[rs[0]]["to"].append((rs[1],rs[2]))
-        else:
-            node[rs[0]] = {}
-            node[rs[0]]["to"] = [(rs[1],rs[2])]
+        graph.add_edge(rs[0], rs[1], int(rs[2]))
 
-    # print(node)
-    res_paths = printAllPaths(node,start,dst)
-    print(res_paths)
+    path = dijsktra(graph,start,dst)
+    return path
 
-def printAllPathsUtil(node_to_visit, dst, visited, path, node, res_paths):
-    # Mark the current node as visited and store in path
-    visited[node_to_visit]= True
-    path.append(node_to_visit)
-
-    # If current vertex is same as destination, then print
-    # current path[]
-    if node_to_visit == dst:
-        print("correct path is",path)
-        res_paths.append(path)
-        print(all_paths)
-        # print(all_paths)
-    elif node_to_visit not in node:
-        print(path)
-    else:
-        # If current vertex is not destination
-        #Recur for all the vertices adjacent to this vertex
-        for child in node[node_to_visit]["to"]:
-            if visited[child[0]]==False:
-                printAllPathsUtil(child[0], dst, visited, path, node, res_paths)
-
-    # Remove current vertex from path[] and mark it as unvisited
-    path.pop()
-    visited[node_to_visit]= False
-
-    return res_paths
-
-
-# Prints all paths from 's' to 'd'
-def printAllPaths(node, start, dst):
+def dijsktra(graph, initial, end):
+    # shortest paths is a dict of nodes
+    # whose value is a tuple of (previous node, weight)
+    shortest_paths = {initial: (None, 0)}
+    current_node = initial
     visited = set()
-    for key in node:
-        visited.add(key)
-        if "to" in node[key]:
-            for child in node[key]["to"]:
-                visited.add(child[0])
 
-    visited_dict = {}
-    for val in visited:
-        visited_dict[val] = False
+    while current_node != end:
+        visited.add(current_node)
+        destinations = graph.edges[current_node]
+        weight_to_current_node = shortest_paths[current_node][1]
 
+        for next_node in destinations:
+            weight = graph.weights[(current_node, next_node)] + weight_to_current_node
+            if next_node not in shortest_paths:
+                shortest_paths[next_node] = (current_node, weight)
+            else:
+                current_shortest_weight = shortest_paths[next_node][1]
+                if current_shortest_weight > weight:
+                    shortest_paths[next_node] = (current_node, weight)
 
-    # Create an array to store paths
+        next_destinations = {node: shortest_paths[node] for node in shortest_paths if node not in visited}
+        if not next_destinations:
+            return "Route Not Possible"
+        # next node is the destination with the lowest weight
+        current_node = min(next_destinations, key=lambda k: next_destinations[k][1])
+
+    # Work back through destinations in shortest path
     path = []
-    res_paths = []
-    # Call the recursive helper function to print all paths
-    return printAllPathsUtil(start, dst,visited_dict, path, node, res_paths)
-
-
-
-
-    # answer = []
-    #
-    # while visited:
-    #     mother_node = find_mother(node, visited[0])
-    #     answer.append(mother_node)
-    #     # print(answer)
-    #     remove_children(node,mother_node,visited)
-
-    # result_string = {
-    #     "result":
-    # }
-
-    return
-
-def appendpath(path):
-    global all_paths
-    all_paths.append(path)
-
-def resetpath():
-    global all_paths
-    all_paths = []
-
-# def find_mother(node, node_to_check):
-#     if "from" in node[node_to_check]:
-#         # print("finding parent of",node_to_check)
-#         parent_node = node[node_to_check]["from"][0]
-#         return find_mother(node, parent_node)
-#     else:
-#         # print("parent found! parent is:",node_to_check)
-#         return node_to_check
-#
-# def remove_children(node, node_to_check, visited):
-#     if "to" in node[node_to_check]:
-#         for children_node in node[node_to_check]["to"]:
-#             # print("visiting children:", children_node)
-#             if children_node not in visited:
-#                 pass
-#             else:
-#                 remove_children(node, children_node, visited)
-#         # print("popping",node_to_check)
-#         visited.pop(visited.index(node_to_check))
-#     else:
-#         # print("this is the node to check",node_to_check)
-#         # print("this is visited: ",visited)
-#         if node_to_check in visited:
-#             # print("popping",node_to_check)
-#             visited.pop(visited.index(node_to_check))
-#         else:
-#             # print(node_to_check,"not in loop")
-#             pass
+    while current_node is not None:
+        path.append(current_node)
+        next_node = shortest_paths[current_node][0]
+        current_node = next_node
+    # Reverse path
+    path = path[::-1]
+    return path
