@@ -28,21 +28,21 @@ def tetris_evaluate():
     for i in range(n):
         rotate = 0
         shift = 0
-        if(seq[i]=="J"):
-            if(int(J_count/3)%2==0):
-                shift = J_count%3 * 2
+        if(seq[i]=="L"):
+            if(int(L_count/3)%2==0):
+                shift = L_count%3 * 2
             else:
                 rotate = 2
-                shift = J_count%3 * 2
-            J_count += 1
+                shift = L_count%3 * 2
+            L_count += 1
         else:
             offset = 6
-            if(int(L_count/2)%2==0):
-                shift = (L_count%2 * 2) + offset
+            if(int(J_count/2)%2==0):
+                shift = (J_count%2 * 2) + offset
             else:
                 rotate = 2
-                shift = (L_count%2 * 2) + offset
-            L_count+=1
+                shift = (J_count%2 * 2) + offset
+            J_count+=1
 
         if(rotate!=0):
             actions.append(int(str(rotate)+str(shift)))
