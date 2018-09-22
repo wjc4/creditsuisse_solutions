@@ -16,10 +16,22 @@ def evaluate_ATC():
     # To return a new list, use the sorted() built-in function...
     newlist = sorted(data["Flights"], key=lambda x: x["Time"])
 
+    RT = int(int(data["Static"]["ReserveTime"])/60)
+
+    if "Runways" not in data["Static"]:
+        for i in range(len(newlist)):
+            if(i!=0 and (get_min(newlist[i]["Time"])-get_min(newlist[i-1]["Time"])<=RT)):
+                newlist[i]["Time"]=plusRT(newlist[i-1]["Time"],RT)
+            i=i+1
+
+        result = {"Flights":newlist}
+        app.logger.info("My result :{}".format(result))
+
+        return jsonify(result);
+
     print(newlist)
 
     delay = 0
-    RT = int(int(data["Static"]["ReserveTime"])/60)
     runway_names = data["Static"]["Runways"]
     runways = [{"name":"A","occupied":False,"release-time":"0000"}]*len(runway_names)
     for i in range(len(runway_names)):
