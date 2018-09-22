@@ -46,6 +46,92 @@ def sum_of_primes(n):
             solution = [b, a]
 
     if len(solution)==0:
-        solution = [n]
+        return [n]
+    else:
+        return solution
 
-    return solution
+# # Python Program to print
+# # all N primes after prime
+# # P whose sum equals S
+# import math
+#
+# # vector to store prime
+# # and N primes whose
+# # sum equals given S
+# set = []
+# prime = []
+#
+# def prime_sieve(limit):
+#     prime = [True] * limit
+#     prime[0] = prime[1] = False
+#
+#     for i, is_prime in enumerate(prime):
+#         if is_prime:
+#             yield i
+#             for n in range(i * i, limit, i):
+#                 prime[n] = False
+#
+# # function to display N primes whose sum equals S
+# def display():
+#
+#     global set, prime
+#     length = len(set)
+#     for i in range(0, length):
+#         print (set[i], end = " ")
+#     print ()
+#
+# # function to evaluate all possible N primes whose sum equals S
+# def primeSum(total, N, sum, index):
+#
+#     global set, prime
+#
+#     # if total equals sum and total is reached using N primes
+#     if (total == sum and len(set) == N):
+#
+#         # display the N primes
+#         display()
+#         return
+#
+#     # if total is greater than S or if index has reached last element
+#     if (total > sum or index == len(prime)):
+#         return
+#
+#     # add prime[index] to set vector
+#     set.append(prime[index])
+#
+#     # include the (index)th prime to total
+#     primeSum(total + prime[index], N, sum, index + 1)
+#
+#     # remove element from set vector
+#     set.pop()
+#
+#     # exclude (index)th prime
+#     primeSum(total, N, sum, index + 1)
+#
+# # function to generate all primes
+# def allPrime(sum):
+#
+#     global set, prime
+#
+#     # all primes less than sum
+#     primes = prime_sieve(sum)
+#
+#     # if primes are less than N
+#     if (len(prime) < 4):
+#         return primeSum(0, 4, sum, 0)
+#
+# @app.route('/prime-sum', methods=['POST'])
+# def evaluate_primes():
+#     # JSON mode
+#     data = request.get_json();
+#     app.logger.info("data sent for evaluation {}".format(data))
+#     inputValue = data.get("input");
+#
+#     # Args Key Mode
+#     # data = request.args
+#     # inputValue = int(data.get('input'))
+#
+#     result = allPrime(inputValue)
+#     app.logger.info("My result :{}".format(result))
+#
+#     return jsonify(result);
