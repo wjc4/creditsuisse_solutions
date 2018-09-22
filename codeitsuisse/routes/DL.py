@@ -41,10 +41,15 @@ def ML_evaluate():
 
     result = popt.dot(q)
 
+    result = {"answer":result}
+
     app.logger.info("My result :{}".format(result))
 
     return jsonify(result);
 
-def func(X,     b, c, d):
+def func(X, b, c, d):
     X1,X2,X3 = X
     return b*X1 + c*X2 + d*X3
+
+@app.route('/machine-learning/question-2', methods=['POST'])
+def DL_evaluate(): {}
