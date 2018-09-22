@@ -14,6 +14,16 @@ def part1mindist():
     app.logger.info("My result :{}".format(result))
     return jsonify({'answer':result})
 
+@app.route('/customers-and-hotel/minimum-camps', methods=['POST'])
+def mincamp():
+    data = request.get_json()
+    app.logger.info("data sent for evaluation {}".format(data))
+    ranges=[]
+    for hooman in data:
+        ranges.append((hooman['pos']-hooman['distance'],hooman['pos']+hooman['distance']))
+    result = findMinCamps(ranges)
+    app.logger.info("My result :{}".format(result))
+    return jsonify({'answer':result})
 
 # Returns minimum difference between any pair
 def findMinDiff(arr, n):
@@ -34,3 +44,22 @@ def findMinDiff(arr, n):
  
     # Return min diff
     return diff
+
+def findMinCamps(ranges):
+    # sort by the end points
+    # ranges=[(1,5),(2,4),(4,6),(3,7),(5,9),(6,6)]
+
+    ranges.sort(key=lambda p:p[1])
+
+    #generate required points
+    out=[]
+    last = None
+    ans = 0
+    for r in ranges:
+        if last == None or last < r[0]:
+            last = r[1]
+            ans = ans + 1
+            out.append(last)
+    return ans
+    #print answer
+    # print(out)
