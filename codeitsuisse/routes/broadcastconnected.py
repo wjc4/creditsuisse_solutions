@@ -36,7 +36,7 @@ def leastnodes(data):
             node[rs[1]] = {}
             node[rs[1]]["from"] = [rs[0]]
 
-    print(node)
+    # print(node)
 
     visited = []
     for key in node:
@@ -74,11 +74,11 @@ def leastnodes(data):
 
 def find_mother(node, node_to_check):
     if "from" in node[node_to_check]:
-        print("finding parent of",node_to_check)
+        # print("finding parent of",node_to_check)
         parent_node = node[node_to_check]["from"][0]
         return find_mother(node, parent_node)
     else:
-        print("parent found! parent is:",node_to_check)
+        # print("parent found! parent is:",node_to_check)
         return node_to_check
 
 def count_children(node, node_to_check, visited):
