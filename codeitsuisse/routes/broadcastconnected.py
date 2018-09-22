@@ -4,6 +4,7 @@ from flask import request, jsonify
 
 from codeitsuisse import app
 
+count = 0
 
 @app.route('/broadcaster/most-connected-node', methods=['POST'])
 def eval_broadcast_connected():
@@ -46,12 +47,26 @@ def leastnodes(data):
 
     while visited:
         mother_node = find_mother(node, visited[0])
-        answer.append(mother_node)
+        count_children(node,mother_node,visited)
+        answer.append((mother_node, returncount()))
         print(answer)
-        remove_children(node,mother_node,visited)
+        reset()
+
+    max_count = 0
+    for letter,num in answer:
+        if num>max_count:
+            max_count = num
+
+    most_connected = []
+    for letter,num in answer:
+        if num==max_count:
+            most_connected.append(letter)
+
+    print(sorted(most_connected))
+    # most_connected = most_connected.sorted()
 
     result_string = {
-        "result": answer
+        "result": sorted(most_connected[0])
     }
 
     return result_string
@@ -66,11 +81,37 @@ def find_mother(node, node_to_check):
         print("parent found! parent is:",node_to_check)
         return node_to_check
 
-# # WORK IN PROGRESS
-# def count_children(node, node_to_check):
-#     if "to" in node[node_to_check]:
-#         for children_node in node[node_to_check]["to"]:
-#             print("visiting children:", children_node)
-#             count_children(node, children_node)
-#
-#     else:
+def count_children(node, node_to_check, visited):
+    if "to" in node[node_to_check]:
+        for children_node in node[node_to_check]["to"]:
+            # print("visiting children:", children_node)
+            if children_node not in visited:
+                pass
+            else:
+                count_children(node, children_node, visited)
+        # print("popping",node_to_check)
+        visited.pop(visited.index(node_to_check))
+        plusone()
+    else:
+        # print("this is the node to check",node_to_check)
+        # print("this is visited: ",visited)
+        if node_to_check in visited:
+            # print("popping",node_to_check)
+            visited.pop(visited.index(node_to_check))
+            plusone()
+        else:
+            # print(node_to_check,"not in loop")
+            pass
+
+
+def plusone():
+    global count
+    count += 1
+
+def reset():
+    global count
+    count = 0
+
+def returncount():
+    global count
+    return count
