@@ -41,15 +41,17 @@ from flask import request, jsonify
 
 from codeitsuisse import app
 
+import operator
+
 logger = logging.getLogger(__name__)
 
 @app.route('/skill-tree', methods=['POST'])
 def ST_evaluate():
 
     # JSON mode
-    data = request.get_json();
+    data = request.get_json()
     app.logger.info("data sent for evaluation {}".format(data))
-    boss = data["boss"]
+    hp = data["boss"]["offense"]
     skills = data["skills"]
 
     # Args Key Mode
@@ -64,9 +66,11 @@ def ST_evaluate():
             None
             )
 
+    skill_list={}
     for skill in skills:
         print('Registering a skill...{}'.format(skill["name"]))
-        skill = Tree(
+        # print(skill)
+        temp = Tree(
                 [],
                 skill["name"],
                 skill["offense"],
@@ -74,13 +78,22 @@ def ST_evaluate():
                 skill["require"]
                 )
         #do treeSearch
-        if(skill.require==None):
-            root.children.append(skill)
+        if(skill["require"]==None):
+            root.children.append(temp)
+        skill_list[skill["name"]]=temp
+    # print(skill_list)
+    for skill in skill_list:
+        if skill_list[skill].require:
+            skill_list[skill_list[skill].require].children.append(skill_list[skill])
+    
+    print(skill_list)
+    
 
-        else:
-            #add skill to branch require
-            print("Pre-req skill needed.")
-            addSkill(root,skill)
+
+        # else:
+        #     #add skill to branch require
+        #     print("Pre-req skill needed.")
+        #     addSkill(root,skill)
 
     # root.data = "root"
     # root.left = Tree()
@@ -88,15 +101,86 @@ def ST_evaluate():
     # root.right = Tree()
     # root.right.data = "right"
 
-    print(len(root.children))
+    print([node.name for node in root.children])
 
-    #build skill Tree
+    available = []
+    for node in root.children:
+        available.append(node)
 
-    print('\n\n\n\n\n\n')
+    # available.sort(key=operator.attrgetter('points'))
 
-    printTree(root)
-
-    result = "done"
+    # print([node.name for node in available])
+    possible = {}
+    findMinPath(available,skill_list,0,hp,[],possible)
+    print(possible)
+    res = min(possible.items(), key=operator.itemgetter(1))[0].split(',')
+    res.pop(0)
     # app.logger.info("My result :{}".format(result))
+    return jsonify(res)
 
-    return jsonify(result);
+
+import itertools
+
+def findMinPath(available,skill_list,dmg,hp,path,res):
+
+    combs = []
+
+    for i in range(1, len(available)+1):
+        els = [list(x) for x in itertools.combinations(available, i)]
+        combs.extend(els)
+    for array in combs:
+        # calculate damage
+        new_dmg = dmg
+        # if dmg>=hp, stop and return path and points/costs
+
+        # else carry on searching
+        available = []
+        new_path=path.copy()
+        for obj in array:
+            new_dmg = new_dmg + obj.offense
+            new_path.append(obj)
+            if obj.children:
+                for child in obj.children:
+                    available.append(child)
+        # print(new_path, new_dmg)
+        if new_dmg >= hp:
+            key = "root"
+            cost = 0
+            for node in new_path:
+                key = key + "," + node.name
+                cost = cost + node.points
+            res[key]= cost
+        elif available:
+            findMinPath(available,skill_list,new_dmg,hp,new_path,res)
+
+# def findMaxPath(mat):
+ 
+#     # To find max val in first row
+#     res = -1
+#     for i in range(M):
+#         res = max(res, mat[0][i])
+  
+#     for i in range(1, N):
+  
+#         res = -1
+#         for j in range(M):
+  
+#             # When all paths are possible
+#             if (j > 0 and j < M - 1):
+#                 mat[i][j] += max(mat[i - 1][j],
+#                                  max(mat[i - 1][j - 1], 
+#                                      mat[i - 1][j + 1]))
+  
+#             # When diagonal right is not possible
+#             elif (j > 0):
+#                 mat[i][j] += max(mat[i - 1][j],
+#                                  mat[i - 1][j - 1])
+  
+#             # When diagonal left is not possible
+#             elif (j < M - 1):
+#                 mat[i][j] += max(mat[i - 1][j],
+#                                  mat[i - 1][j + 1])
+  
+#             # Store max path sum
+#             res = max(mat[i][j], res)
+#     return res
