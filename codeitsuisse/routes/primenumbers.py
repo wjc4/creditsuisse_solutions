@@ -18,7 +18,7 @@ def evaluate_primes():
     # data = request.args
     # inputValue = int(data.get('input'))
 
-    result = inputValue
+    result = sum_of_primes(inputValue)
     app.logger.info("My result :{}".format(result))
 
     return jsonify(result);
@@ -35,6 +35,7 @@ def prime_sieve(limit):
                 prime[n] = False
 
 def sum_of_primes(n):
+    solution = []
     primes = list(prime_sieve(n))
     # for fast `in` lookups:
     primes_set = set(primes)
@@ -42,4 +43,9 @@ def sum_of_primes(n):
         b = n - a
         if b in primes_set:
             # this is the lexicographically smallest by design
-            return [a, b]
+            solution = [a, b]
+
+    if len(solution)==0:
+        solution = [n]
+
+    return solution
