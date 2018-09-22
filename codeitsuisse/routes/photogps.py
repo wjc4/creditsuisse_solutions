@@ -17,7 +17,7 @@ def photogps():
     result = []
     for link in data:
         app.logger.info(link['path']) #geturl
-        # resource = urllib.request.urlopen(link['path']).read()
+        resource = urllib.request.urlopen(link['path']).read()
         # app.logger.info(resource) #geturl
         result.append(extract(resource))
     return jsonify(result)
@@ -25,13 +25,37 @@ def photogps():
 def extract(url):
     # exif_dict = piexif.load("foo1.jpg")
     exif_dict = piexif.load(url)
-    # app.logger.info(exif_dict["GPS"])
+    app.logger.info(exif_dict["GPS"])
+    lat=convert_to_degress(exif_dict["GPS"][2])
+    lon=convert_to_degress(exif_dict["GPS"][4])
+    return {
+        "lat":lat,
+        "long":lon
+    }
     # for ifd in ("0th", "Exif", "GPS", "1st"):
-    for ifd in ("GPS",):
-        for tag in exif_dict[ifd]:
-            # pass
-            app.logger.info(exif_dict[ifd][tag])
-            # app.logger.info(piexif.TAGS[ifd][tag]["name"], exif_dict[ifd][tag])
+    # for ifd in ("GPS",):
+    #     for tag in exif_dict[ifd]:
+    #         # pass
+    #         app.logger.info(exif_dict[ifd][tag])
+    #         # app.logger.info(piexif.TAGS[ifd][tag]["name"], exif_dict[ifd][tag])
+
+def convert_to_degress(value):
+
+    """Helper function to convert the GPS coordinates 
+    stored in the EXIF to degress in float format"""
+    d0 = value[0][0]
+    d1 = value[0][1]
+    d = float(d0) / float(d1)
+
+    m0 = value[1][0]
+    m1 = value[1][1]
+    m = float(m0) / float(m1)
+
+    s0 = value[2][0]
+    s1 = value[2][1]
+    s = float(s0) / float(s1)
+
+    return d + (m / 60.0) + (s / 3600.0)
 
 
 # class ImageMetaData(object):
