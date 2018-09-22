@@ -29,8 +29,6 @@ def evaluate_ATC():
 
         return jsonify(result);
 
-    print(newlist)
-
     delay = 0
     runway_names = data["Static"]["Runways"]
     runway_names.sort()
@@ -44,28 +42,64 @@ def evaluate_ATC():
     # by default assign all A runways
     i=0
     n = len(newlist)
+    back_count=0
 
-    for i in range(n):
+    while (i<n):
+        if("Distressed" in newlist[i] and newlist[i]["Distressed"]=="true"):
+            #traceback RT, drop and add behind
+            del newlist[i]["Distressed"]
+            print('Trigger distress')
+            for j in range(i-1,-1,-1):
+                print(newlist[i]["Time"],newlist[j]["Time"])
+                if(get_min(newlist[i]["Time"]) - get_min(newlist[j]["Time"]) < RT):
+                    newlist[j]["Time"]=plusRT(newlist[i]["Time"],RT)
+                    print("RTTTTT",newlist[j]["Time"])
+                    tmp = newlist[j]
+                    for runway in runways:
+                        if(runway["name"]==newlist[j]["Runway"]):
+                            runway["occupied"] = False
+                            runway["release-time"] = "0000"
+                    newlist[j] = newlist[i]
+                    newlist[i] = tmp
+
+                    back_count+=1
+                    print('isnide')
+
+            i=i-back_count
+
+        print("i=",i)
+        print(newlist[i])
+
+
+
+
         for runway in runways:
-            # print(RT)
-            print(get_min(newlist[i]["Time"]) - get_min(runway["release-time"]))
+            # print(get_min(newlist[i]["Time"]) - get_min(runway["release-time"]))
             if(runway["occupied"] == True and (get_min(newlist[i]["Time"]) - get_min(runway["release-time"]) >= 0)):
                 runway["occupied"] = False
                 runway["release-time"] = "0000"
-            print(runways)
-        # if(i!=0 & getmin(newlist[i]["Time"]) - getmin(newlist[i-1]["Time"]) < ReserveTime):
-        #     for
+
+        if(not any([runway["occupied"]==False for runway in runways])):
+            print("any!")
+            min = 0
+            for x in range(len(runways)-1):
+                if get_min(runways[i]["release-time"]) < get_min(runways[min]["release-time"]):
+                    min = x
+
+            print("i=",i)
+            newlist[i]["Time"] = runways[min]["release-time"]
+            newlist[i]["Runway"] = runways[min]["name"]
+            runways[min]["release-time"] = plusRT(runways[min]["release-time"],RT)
 
         for runway in runways:
             if(runway["occupied"] == False):
                 runway["occupied"] = True
                 runway["release-time"] = plusRT(newlist[i]["Time"],RT)
-                # print(newlist[i]["Time"],runway["release-time"])
                 newlist[i]["Runway"] = runway["name"]
                 break
 
-            # newlist[i]["Time"] = plus10(newlist[i-1]["Time"])
-
+        i=i+1
+        print(runways)
     # Args Key Mode
     # data = request.args
     # inputValue = int(data.get('input'))
@@ -83,8 +117,6 @@ def get_min(time_str):
 def gen_timestr(min):
     h = str(int(min/60))
     m = str(min - int(h) * 60)
-
-    print(h,m)
     if(len(h)==1):
         h = "0" + h
     if(len(m)==1):
@@ -95,5 +127,4 @@ def gen_timestr(min):
 def plusRT(time_str,RT):
     min = get_min(time_str)
     min = min + RT
-    print("plusRT",min,RT)
     return gen_timestr(min)
