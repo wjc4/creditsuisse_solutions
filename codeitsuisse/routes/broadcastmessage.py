@@ -47,7 +47,7 @@ def leastnodes(data):
     while visited:
         mother_node = find_mother(node, visited[0])
         answer.append(mother_node)
-        print(answer)
+        # print(answer)
         remove_children(node,mother_node,visited)
 
     result_string = {
