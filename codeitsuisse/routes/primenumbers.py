@@ -7,7 +7,7 @@ from codeitsuisse import app
 
 # logger = logging.getLogger(__name__)
 
-@app.route('/generate_primes', methods=['POST'])
+@app.route('/prime-sum', methods=['POST'])
 def evaluate_primes():
     # JSON mode
     data = request.get_json();
@@ -35,6 +35,7 @@ def prime_sieve(limit):
                 prime[n] = False
 
 def sum_of_primes(n):
+    solution = []
     primes = list(prime_sieve(n))
     # for fast `in` lookups:
     primes_set = set(primes)
@@ -42,4 +43,9 @@ def sum_of_primes(n):
         b = n - a
         if b in primes_set:
             # this is the lexicographically smallest by design
-            return [a, b]
+            solution = [b, a]
+
+    if len(solution)==0:
+        solution = [n]
+
+    return solution

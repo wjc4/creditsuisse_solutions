@@ -7,6 +7,7 @@ app = Flask(__name__)
 import codeitsuisse.routes.square
 import codeitsuisse.routes.primenumbers
 import codeitsuisse.routes.ATC
+import codeitsuisse.routes.photogps
 
 if 'DYNO' in os.environ:
     logFormatter = logging.Formatter("%(asctime)s [%(filename)s] [%(funcName)s] [%(lineno)d] [%(levelname)-5.5s]  %(message)s")
