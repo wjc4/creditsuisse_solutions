@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 import codeitsuisse.routes.square
 import codeitsuisse.routes.primenumbers
+import codeitsuisse.routes.ATC
 import codeitsuisse.routes.photogps
 
 if 'DYNO' in os.environ:
