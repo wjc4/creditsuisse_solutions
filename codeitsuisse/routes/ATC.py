@@ -57,7 +57,7 @@ def evaluate_ATC():
     # data = request.args
     # inputValue = int(data.get('input'))
 
-    result = newlist
+    result = {"Flights":newlist}
     app.logger.info("My result :{}".format(result))
 
     return jsonify(result);
