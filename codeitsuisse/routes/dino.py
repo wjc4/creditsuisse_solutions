@@ -17,7 +17,61 @@ def dino2():
     a = data.get("calories_for_each_type_for_raphael")
     b = data.get("calories_for_each_type_for_leonardo")
     q = data.get("maximum_difference_for_calories")
+    a.sort()
+    b.sort()
+    count = [0]
+    ans = outer_sum(q,count,a,b)
+    # ans = highmem(n,a,b,q)
+    # a = np.array([1, 3, 5, 6, 9, 10, 14, 15, 56])
 
+    # np.where(np.logical_and(a>=6, a<=10))
+    # # returns (array([3, 4, 5]),)
+
+    # b = np.array(b_sums)
+    # for
+    # np.where(np.logical_and(b>=6, b<=10))
+
+    # app.logger.info("My result :{}".format(result))
+    ans = ans % 100000123
+    return jsonify({"result":int(ans)})
+
+def outer_sum(q,count,numbers, b, partial=[]):
+    s = sum(partial)
+    # print(q,count,b.copy(),s,[])
+    subset_sum(q,count,b,s,[])
+
+    # # check if the partial sum is equals to target
+    # if s == target:
+    #     print("sum(%s)=%s" % (partial, target))
+    # if s >= target:
+    #     return  # if we reach the number why bother to continue
+
+    for i in range(len(numbers)):
+        n = numbers[i]
+        remaining = numbers[i + 1:]
+        outer_sum(q,count,remaining,b,partial + [n])
+    
+    return count[0]
+
+def subset_sum(q,count, numbers, target, partial=[]):
+    s = sum(partial)
+    # print(s)
+    # check if the partial sum is equals to target
+    # if target == 0 or s == 0:
+    #     print(target,s, count)
+    if s >= target-q and s <= target+q:
+        count[0] += 1
+    if s >= target+q:
+        return  # if we reach the number why bother to continue
+    # print(numbers)
+    for i in range(len(numbers)):
+        n = numbers[i]
+        # print(n,numbers,"target: ",target)
+        remaining = numbers[i + 1:]
+        subset_sum(q,count,remaining, target, partial + [n])
+    # print(count[0])
+
+def highmem(n,a,b,q):
     a.sort()
     b.sort()
 
@@ -45,15 +99,5 @@ def dino2():
         total = total + end - start
 
     result = total % 100000123
-    # a = np.array([1, 3, 5, 6, 9, 10, 14, 15, 56])
 
-    # np.where(np.logical_and(a>=6, a<=10))
-    # # returns (array([3, 4, 5]),)
-
-    # b = np.array(b_sums)
-    # for
-    # np.where(np.logical_and(b>=6, b<=10))
-
-    # app.logger.info("My result :{}".format(result))
-    return jsonify({"result":int(result)})
-
+    return result
