@@ -9,7 +9,7 @@ count = 0
 @app.route('/broadcaster/most-connected-node', methods=['POST'])
 def eval_broadcast_connected():
     data = request.get_json()
-    app.logger.info("data sent for evaluation {}".format(data))
+    # app.logger.info("data sent for evaluation {}".format(data))
     input_data = data.get("data")
     result = leastnodes(input_data)
     app.logger.info("My result :{}".format(result))

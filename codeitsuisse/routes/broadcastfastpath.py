@@ -8,7 +8,7 @@ from codeitsuisse import app
 @app.route('/broadcaster/fastest-path', methods=['POST'])
 def eval_broadcast_fastpath():
     data = request.get_json()
-    app.logger.info("data sent for evaluation {}".format(data))
+    # app.logger.info("data sent for evaluation {}".format(data))
     input_data = data.get("data")
     result = leastnodes(input_data)
     app.logger.info("My result :{}".format(result))
