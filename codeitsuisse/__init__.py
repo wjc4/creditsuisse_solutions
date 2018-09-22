@@ -15,6 +15,7 @@ import codeitsuisse.routes.puzzle
 import codeitsuisse.routes.broadcastmessage
 import codeitsuisse.routes.broadcastconnected
 import codeitsuisse.routes.skilltree
+import codeitsuisse.routes.dino
 
 
 if 'DYNO' in os.environ:
