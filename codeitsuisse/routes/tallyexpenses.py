@@ -5,21 +5,20 @@ from codeitsuisse import app
 
 from decimal import *
 
-answer = {
-    "transactions": []
-}
-
 @app.route('/tally-expense', methods=['POST'])
 def evaluate_tally_expense():
     # JSON mode
     data = request.get_json();
     app.logger.info("data sent for evaluation {}".format(data))
 
+    answer = {
+        "transactions": []
+    }
     N = len(data.get("persons"))
     ppl = data.get("persons")
     table = form_table(data.get("expenses"),data.get("persons"))
     # print(table)
-    minCashFlow(table,ppl,N)
+    minCashFlow(table,ppl,N,answer)
 
     result = answer
 
@@ -81,9 +80,7 @@ def getMax(arr,N):
 def minOf2(x, y):
     return x if x < y else y
 
-def minCashFlowRec(amount,ppl,N):
-    global answer
-
+def minCashFlowRec(amount,ppl,N,answer):
     mxCredit = getMax(amount,N)
     mxDebit = getMin(amount,N)
 
@@ -110,9 +107,9 @@ def minCashFlowRec(amount,ppl,N):
     answer["transactions"].append(transaction)
 
     # Recursion
-    minCashFlowRec(amount,ppl,N)
+    minCashFlowRec(amount,ppl,N,answer)
 
-def minCashFlow(graph,ppl,N):
+def minCashFlow(graph,ppl,N,answer):
     net_amount = [0 for i in range(N)]
 
     for p in range(N):
@@ -123,7 +120,7 @@ def minCashFlow(graph,ppl,N):
         net_amount[i] = round(net_amount[i],2)
 
     # print("net amount is",net_amount)
-    minCashFlowRec(net_amount,ppl,N)
+    minCashFlowRec(net_amount,ppl,N,answer)
 
 
 #
