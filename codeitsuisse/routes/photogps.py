@@ -3,7 +3,7 @@
 
 # import logging
 import urllib.request
-import piexif
+# import piexif
 import exifread
 from flask import request, jsonify
 
