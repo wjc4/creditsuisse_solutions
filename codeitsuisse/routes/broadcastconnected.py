@@ -1,6 +1,7 @@
 # import logging
 
 from flask import request, jsonify
+from collections import defaultdict
 
 from codeitsuisse import app
 
@@ -11,11 +12,14 @@ def eval_broadcast_connected():
     data = request.get_json()
     # app.logger.info("data sent for evaluation {}".format(data))
     input_data = data.get("data")
-    result = leastnodes(input_data)
+    result_input = most_connections(input_data)
+    result = {
+        "result": result_input
+    }
     app.logger.info("My result :{}".format(result))
     return jsonify(result)
 
-def leastnodes(data):
+def most_connections(data):
     node = {}
     for relationships in data:
         rs = relationships.split("->")
@@ -38,75 +42,39 @@ def leastnodes(data):
 
     # print(node)
 
-    visited = []
+    # search for roots
+    roots = []
     for key in node:
-        visited.append(key)
+        if "from" not in node[key]:
+            roots.append(key)
 
-
-    answer = []
-
-    while visited:
-        mother_node = find_mother(node, visited[0])
-        count_children(node,mother_node,visited)
-        answer.append((mother_node, returncount()))
-        # print(answer)
+    answers = []
+    for root in roots:
         reset()
+        count_children(node,root)
+        count = returncount()
+        answers.append((root,count))
 
-    max_count = 0
-    for letter,num in answer:
-        if num>max_count:
-            max_count = num
+    sorted_answers = sorted(answers, key=lambda x: x[1], reverse=True)
+    final_answers = []
+    for i in range(len(sorted_answers)):
+        if sorted_answers[i][1]==sorted_answers[0][1]:
+            final_answers.append(sorted_answers[i])
 
-    most_connected = []
-    for letter,num in answer:
-        if num==max_count:
-            most_connected.append(letter)
-    # print(most_connected)
-    # print("before sort:",most_connected)
-    most_connected = sorted(most_connected)
-    # print("after sort:",most_connected)
-    # most_connected = most_connected.sorted()
-    print("-----------------------------\n\n")
-    print("THE ANSWER IS:",most_connected[0])
-
-    result_string = {
-        "result": most_connected[0]
-    }
-
-    return result_string
-
-
-def find_mother(node, node_to_check):
-    if "from" in node[node_to_check]:
-        # print("finding parent of",node_to_check)
-        parent_node = node[node_to_check]["from"][0]
-        return find_mother(node, parent_node)
+    # sort by alphabetical order
+    if len(final_answers)==0:
+        return final_answers[0][0]
     else:
-        # print("parent found! parent is:",node_to_check)
-        return node_to_check
+        sorted_fanswers = sorted(final_answers, key=lambda x: x[0])
+        return sorted_fanswers[0][0]
 
-def count_children(node, node_to_check, visited):
+def count_children(node,node_to_check):
     if "to" in node[node_to_check]:
-        for children_node in node[node_to_check]["to"]:
-            # print("visiting children:", children_node)
-            if children_node not in visited:
-                pass
-            else:
-                count_children(node, children_node, visited)
-        # print("popping",node_to_check)
-        visited.pop(visited.index(node_to_check))
-        plusone()
-    else:
-        # print("this is the node to check",node_to_check)
-        # print("this is visited: ",visited)
-        if node_to_check in visited:
-            # print("popping",node_to_check)
-            visited.pop(visited.index(node_to_check))
+        for child in node[node_to_check]["to"]:
             plusone()
-        else:
-            # print(node_to_check,"not in loop")
-            pass
-
+            count_children(node,child)
+    else:
+        pass
 
 def plusone():
     global count
