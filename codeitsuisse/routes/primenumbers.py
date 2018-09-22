@@ -145,7 +145,7 @@ from itertools import combinations as cmb
 from flask import request, jsonify
 
 from codeitsuisse import app
-
+import pyprimesieve as pm
 # logger = logging.getLogger(__name__)
 
 @app.route('/prime-sum', methods=['POST'])
@@ -154,10 +154,18 @@ def evaluate_primes():
     data = request.get_json();
     app.logger.info("data sent for evaluation {}".format(data))
     inputValue = data.get("input");
+    if inputValue % 2 == 0:
+        return jsonify(stackexchange(inputValue))
+    else:
+        ans = stackexchange(inputValue-3)
+        ans.append(3)
+        return jsonify(ans)
 
     # Args Key Mode
     # data = request.args
     # inputValue = int(data.get('input'))
+
+
     end=False
     i=1
     n=inputValue
@@ -193,3 +201,44 @@ def genP(n):
     p = [2]
     p.extend([x for x in range(3, n+1, 2) if isP(x)])
     return p
+
+
+def stackexchange(n):
+    import itertools
+    import math
+    izip = itertools.zip_longest
+    chain = itertools.chain.from_iterable
+    compress = itertools.compress
+    def rwh_primes2_python3(n):
+        """ Input n>=6, Returns a list of primes, 2 <= p < n """
+        zero = bytearray([False])
+        size = n//3 + (n % 6 == 2)
+        sieve = bytearray([True]) * size
+        sieve[0] = False
+        for i in range(int(n**0.5)//3+1):
+          if sieve[i]:
+            k=3*i+1|1
+            start = (k*k+4*k-2*k*(i&1))//3
+            sieve[(k*k)//3::2*k]=zero*((size - (k*k)//3 - 1) // (2 * k) + 1)
+            sieve[  start ::2*k]=zero*((size -   start  - 1) // (2 * k) + 1)
+        ans = [2,3]
+        poss = chain(izip(*[range(i, n, 6) for i in (1,5)]))
+        ans.extend(compress(poss, sieve))
+        return ans
+
+    string2 = "Impossible"
+    sieve = [t for t in rwh_primes2_python3(n) if t <= math.floor((n // 2) / 2) * 2 + 1][::-1]
+    another = [t for t in rwh_primes2_python3(n) if t >= math.floor((n // 2) / 2) * 2 + 1]
+
+    if n > 5 and n % 2 == 0:
+        for smaller in sieve:
+            if n - smaller in another:
+                return [smaller, n - smaller]
+                break
+    elif n % 2 == 1 and n != 5:
+        if n - 2 in another or n-2 in sieve: print (2, n-2)
+        else: print ('Impossible')
+    elif n == 4:
+        return [2,2]
+    else:
+        return [2,3]
