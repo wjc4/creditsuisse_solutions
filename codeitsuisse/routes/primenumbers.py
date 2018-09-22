@@ -43,7 +43,7 @@ def sum_of_primes(n):
         b = n - a
         if b in primes_set:
             # this is the lexicographically smallest by design
-            solution = [a, b]
+            solution = [b, a]
 
     if len(solution)==0:
         return [n]
