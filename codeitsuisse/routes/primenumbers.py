@@ -18,8 +18,7 @@ def evaluate_primes():
     # data = request.args
     # inputValue = int(data.get('input'))
 
-    # result = sum_of_primes(inputValue)
-    result = [inputValue]
+    result = sum_of_primes(inputValue)
     app.logger.info("My result :{}".format(result))
 
     return jsonify(result);
@@ -47,6 +46,6 @@ def sum_of_primes(n):
             solution = [a, b]
 
     if len(solution)==0:
-        solution = [n]
-
-    return solution
+        return [n]
+    else:
+        return solution
