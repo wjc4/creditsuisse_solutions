@@ -1,87 +1,78 @@
 # import logging
 
 from flask import request, jsonify
+from collections import defaultdict
 
 from codeitsuisse import app
 
+class Graph():
+    def __init__(self):
+        self.edges = defaultdict(list)
+        self.weights = {}
+
+    def add_edge(self, from_node, to_node, weight):
+        # Note: assumes edges are bi-directional
+        self.edges[from_node].append(to_node)
+        self.edges[to_node].append(from_node)
+        self.weights[(from_node, to_node)] = weight
+        self.weights[(to_node, from_node)] = weight
 
 @app.route('/broadcaster/fastest-path', methods=['POST'])
 def eval_broadcast_fastpath():
     data = request.get_json()
     # app.logger.info("data sent for evaluation {}".format(data))
     input_data = data.get("data")
-    result = leastnodes(input_data)
+    sender = data.get("sender")
+    recipient = data.get("recipient")
+    result_input = fastpath(input_data,sender,recipient)
+    result = {
+        "result": result_input
+    }
     app.logger.info("My result :{}".format(result))
     return jsonify(result)
 
-def leastnodes(data):
-    node = {}
+def fastpath(data,start,dst):
+    graph = Graph()
     for relationships in data:
-        rs = relationships.split("->")
-        if rs[0] in node:
-            if "to" in node[rs[0]]:
-                node[rs[0]]["to"].append(rs[1])
+        rs = relationships.replace("->"," ").replace(","," ").split()
+        graph.add_edge(rs[0], rs[1], int(rs[2]))
+
+    path = dijsktra(graph,start,dst)
+    return path
+
+def dijsktra(graph, initial, end):
+    # shortest paths is a dict of nodes
+    # whose value is a tuple of (previous node, weight)
+    shortest_paths = {initial: (None, 0)}
+    current_node = initial
+    visited = set()
+
+    while current_node != end:
+        visited.add(current_node)
+        destinations = graph.edges[current_node]
+        weight_to_current_node = shortest_paths[current_node][1]
+
+        for next_node in destinations:
+            weight = graph.weights[(current_node, next_node)] + weight_to_current_node
+            if next_node not in shortest_paths:
+                shortest_paths[next_node] = (current_node, weight)
             else:
-                node[rs[0]]["to"] = [rs[1]]
-        else:
-            node[rs[0]] = {}
-            node[rs[0]]["to"] = [rs[1]]
-        if rs[1] in node:
-            if "from" in node[rs[1]]:
-                node[rs[1]]["from"].append(rs[0])
-            else:
-                node[rs[1]]["from"] = [rs[0]]
-        else:
-            node[rs[1]] = {}
-            node[rs[1]]["from"] = [rs[0]]
+                current_shortest_weight = shortest_paths[next_node][1]
+                if current_shortest_weight > weight:
+                    shortest_paths[next_node] = (current_node, weight)
 
-    # print(node)
+        next_destinations = {node: shortest_paths[node] for node in shortest_paths if node not in visited}
+        if not next_destinations:
+            return "Route Not Possible"
+        # next node is the destination with the lowest weight
+        current_node = min(next_destinations, key=lambda k: next_destinations[k][1])
 
-    visited = []
-    for key in node:
-        visited.append(key)
-
-
-    answer = []
-
-    while visited:
-        mother_node = find_mother(node, visited[0])
-        answer.append(mother_node)
-        # print(answer)
-        remove_children(node,mother_node,visited)
-
-    result_string = {
-        "result": answer
-    }
-
-    return result_string
-
-
-def find_mother(node, node_to_check):
-    if "from" in node[node_to_check]:
-        # print("finding parent of",node_to_check)
-        parent_node = node[node_to_check]["from"][0]
-        return find_mother(node, parent_node)
-    else:
-        # print("parent found! parent is:",node_to_check)
-        return node_to_check
-
-def remove_children(node, node_to_check, visited):
-    if "to" in node[node_to_check]:
-        for children_node in node[node_to_check]["to"]:
-            # print("visiting children:", children_node)
-            if children_node not in visited:
-                pass
-            else:
-                remove_children(node, children_node, visited)
-        # print("popping",node_to_check)
-        visited.pop(visited.index(node_to_check))
-    else:
-        # print("this is the node to check",node_to_check)
-        # print("this is visited: ",visited)
-        if node_to_check in visited:
-            # print("popping",node_to_check)
-            visited.pop(visited.index(node_to_check))
-        else:
-            # print(node_to_check,"not in loop")
-            pass
+    # Work back through destinations in shortest path
+    path = []
+    while current_node is not None:
+        path.append(current_node)
+        next_node = shortest_paths[current_node][0]
+        current_node = next_node
+    # Reverse path
+    path = path[::-1]
+    return path
