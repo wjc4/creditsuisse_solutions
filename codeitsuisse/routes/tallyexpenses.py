@@ -17,7 +17,7 @@ def evaluate_tally_expense():
     N = len(data.get("persons"))
     ppl = data.get("persons")
     table = form_table(data.get("expenses"),data.get("persons"))
-    # print(table)
+    print(table)
     minCashFlow(table,ppl,N,answer)
 
     result = answer
@@ -34,13 +34,14 @@ def form_table(expenses, people):
         print(index_paidBy)
 
         if 'exclude' in expense:
+            print(expense["exclude"])
             owe_money = people[:]
             for name in expense["exclude"]:
                 owe_money.remove(name)
-
+            print(owe_money)
             # owed = float(round(Decimal(expense["amount"]/(len(owe_money))-1),2))
-            owed = round(Decimal((expense["amount"]/(len(owe_money))-1)),2)
-
+            owed = round(Decimal(expense["amount"]/(len(owe_money)-1)),2)
+            print(owed)
             for i in range(len(owe_money)):
                 if i == index_paidBy:
                     pass
@@ -97,8 +98,8 @@ def minCashFlowRec(amount,ppl,N,answer):
     # print(min)
     final_paid = round(min,2)
     # # If minimum is the maximum amount to be
-    # print("Person " , mxDebit , " pays " , final_paid
-    #     , " to " , "Person " , mxCredit)
+    print("Person " , mxDebit , " pays " , final_paid
+        , " to " , "Person " , mxCredit)
     transaction = {
         "from": ppl[mxDebit],
         "to": ppl[mxCredit],
