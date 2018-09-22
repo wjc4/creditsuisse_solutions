@@ -7,7 +7,7 @@ from codeitsuisse import app
 
 # logger = logging.getLogger(__name__)
 
-@app.route('/generate_primes', methods=['POST'])
+@app.route('/prime-sum', methods=['POST'])
 def evaluate_primes():
     # JSON mode
     data = request.get_json();
