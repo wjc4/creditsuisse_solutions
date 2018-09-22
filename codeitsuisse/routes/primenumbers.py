@@ -46,6 +46,6 @@ def sum_of_primes(n):
             solution = [b, a]
 
     if len(solution)==0:
-        return [n]
-    else:
-        return solution
+        solution = [n]
+
+    return solution
