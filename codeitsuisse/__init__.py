@@ -9,7 +9,6 @@ import codeitsuisse.routes.primenumbers
 import codeitsuisse.routes.tallyexpenses
 import codeitsuisse.routes.ATC
 import codeitsuisse.routes.photogps
-import codeitsuisse.routes.skilltree
 import codeitsuisse.routes.hotel
 
 if 'DYNO' in os.environ:
