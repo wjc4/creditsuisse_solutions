@@ -5,7 +5,7 @@ from flask import request, jsonify
 from codeitsuisse import app
 
 
-@app.route('/message-broadcast', methods=['POST'])
+@app.route('/broadcaster/message-broadcast', methods=['POST'])
 def eval_broadcaster():
     data = request.get_json()
     app.logger.info("data sent for evaluation {}".format(data))
