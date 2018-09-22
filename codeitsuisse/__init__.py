@@ -10,6 +10,7 @@ import codeitsuisse.routes.tally
 import codeitsuisse.routes.ATC
 import codeitsuisse.routes.photogps
 import codeitsuisse.routes.hotel
+import codeitsuisse.routes.DL
 import codeitsuisse.routes.puzzle
 
 if 'DYNO' in os.environ:
