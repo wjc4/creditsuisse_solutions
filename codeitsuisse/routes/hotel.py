@@ -12,7 +12,7 @@ def part1mindist():
     app.logger.info("data sent for evaluation {}".format(data))
     result = findMinDiff(data, len(data))
     app.logger.info("My result :{}".format(result))
-    return jsonify(result)
+    return jsonify({'answer':result})
 
 
 # Returns minimum difference between any pair
@@ -29,6 +29,8 @@ def findMinDiff(arr, n):
     for i in range(n-1):
         if arr[i+1] - arr[i] < diff:
             diff = arr[i+1] - arr[i]
+        if diff == 0:
+            break
  
     # Return min diff
     return diff
