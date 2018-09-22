@@ -62,11 +62,13 @@ def leastnodes(data):
         if num==max_count:
             most_connected.append(letter)
 
-    print(sorted(most_connected))
+    print("before sort:",most_connected)
+    most_connected = sorted(most_connected)
+    print("after sort:",most_connected)
     # most_connected = most_connected.sorted()
 
     result_string = {
-        "result": sorted(most_connected[0])
+        "result": most_connected
     }
 
     return result_string
