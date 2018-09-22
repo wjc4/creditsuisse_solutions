@@ -31,7 +31,7 @@ def solvegame():
         for i in range(len(array)):
             puzzle.append(array[i])
     # print(tracepuzzle)
-    puzzle[puzzle.index(0)]=9
+    puzzle[puzzle.index(0)]=len(puzzle)
     print(puzzle)
     # puzzle = [1,4,7,2,8,6,3,5,9]
     # puzzle = [7, 5, 9, 8, 1, 2, 3, 6, 4]
