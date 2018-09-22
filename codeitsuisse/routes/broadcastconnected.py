@@ -64,8 +64,10 @@ def leastnodes(data):
     # print(most_connected)
     # print("before sort:",most_connected)
     most_connected = sorted(most_connected)
-    print("after sort:",most_connected)
+    # print("after sort:",most_connected)
     # most_connected = most_connected.sorted()
+    print("-----------------------------\n\n")
+    print("THE ANSWER IS:",most_connected[0])
 
     result_string = {
         "result": most_connected[0]
