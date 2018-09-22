@@ -3,16 +3,29 @@ from flask import request, jsonify
 
 from codeitsuisse import app
 
-N = len(data['persons'])
-ppl = data['persons']
 answer = {
     "transactions": []
 }
 
-def form_table(data):
-    expenses = data['expenses']
-    people = data['persons']
+@app.route('/tally-expense', methods=['POST'])
+def evaluate_tally_expense():
+    # JSON mode
+    data = request.get_json();
+    app.logger.info("data sent for evaluation {}".format(data))
+    input_data = data.get("input");
 
+    N = len(data.get("persons"))
+    ppl = data.get("persons")
+    table = form_table(data.get("expenses"),data.get("persons"))
+    minCashFlow(table,ppl,N)
+
+    result = answer
+
+    app.logger.info("My result :{}".format(result))
+
+    return jsonify(result);
+
+def form_table(expenses, people):
     table = [[0] * len(people) for i in range(len(people))]
 
     for expense in expenses:
@@ -46,8 +59,7 @@ def form_table(data):
 
     return table
 
-def getMin(arr):
-    global N
+def getMin(arr,N):
 
     minInd = 0
     for i in range(1, N):
@@ -55,8 +67,7 @@ def getMin(arr):
             minInd = i
     return minInd
 
-def getMax(arr):
-    global N
+def getMax(arr,N):
 
     maxInd = 0
     for i in range(1, N):
@@ -68,12 +79,11 @@ def getMax(arr):
 def minOf2(x, y):
     return x if x < y else y
 
-def minCashFlowRec(amount):
+def minCashFlowRec(amount,ppl,N):
     global answer
-    global ppl
 
-    mxCredit = getMax(amount)
-    mxDebit = getMin(amount)
+    mxCredit = getMax(amount,N)
+    mxDebit = getMin(amount,N)
 
     print(mxCredit)
     print(mxDebit)
@@ -99,35 +109,18 @@ def minCashFlowRec(amount):
     answer["transactions"].append(transaction)
 
     # Recursion
-    minCashFlowRec(amount)
+    minCashFlowRec(amount,ppl,N)
 
-def minCashFlow(graph):
-    global N
-
+def minCashFlow(graph,ppl,N):
     net_amount = [0 for i in range(N)]
 
     for p in range(N):
         for i in range(N):
             net_amount[p] += (graph[i][p] - graph[p][i])
 
-    minCashFlowRec(net_amount)
+    minCashFlowRec(net_amount,ppl,N)
 
 
-@app.route('/tally-expense', methods=['POST'])
-def evaluate_primes():
-    # JSON mode
-    data = request.get_json();
-    app.logger.info("data sent for evaluation {}".format(data))
-    inputValue = data.get("input");
-
-    table = form_table(inputValue)
-    minCashFlow(table)
-
-    result = answer
-
-    app.logger.info("My result :{}".format(result))
-
-    return jsonify(result);
 #
 # data = {
 #     "name": "Jan Expense Report",
