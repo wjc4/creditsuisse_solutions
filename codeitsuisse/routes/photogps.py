@@ -4,11 +4,14 @@
 # import logging
 import urllib.request
 import piexif
+import exifread
 from flask import request, jsonify
 
 from codeitsuisse import app
 
 # logger = logging.getLogger(__name__)
+
+
 
 @app.route('/imagesGPS', methods=['POST'])
 def photogps():
@@ -16,22 +19,32 @@ def photogps():
     app.logger.info("data sent for evaluation {}".format(data))
     result = []
     for link in data:
-        app.logger.info(link['path']) #geturl
-        resource = urllib.request.urlopen(link['path']).read()
+        # app.logger.info(link['path']) #geturl
+        url = link['path']
+        local_filename, headers = urllib.request.urlretrieve(url)
+        resource = open(local_filename, 'rb')
+        # app.logger.info(resource)
+        # resource = urllib.request.urlopen(link['path']).read()
         # app.logger.info(resource) #geturl
         result.append(extract(resource))
     return jsonify(result)
 
-def extract(url):
+def extract(file):
     # exif_dict = piexif.load("foo1.jpg")
-    exif_dict = piexif.load(url)
-    app.logger.info(exif_dict["GPS"])
-    lat=convert_to_degress(exif_dict["GPS"][2])
-    lon=convert_to_degress(exif_dict["GPS"][4])
+    # exif_dict = piexif.load(file)
+    # app.logger.info(file)
+    # file = open(, 'rb')
+    exif_dict = exifread.process_file(file, details=False)
+    # app.logger.info(exif_dict)
+    # app.logger.info(exif_dict['GPS GPSLatitude'])
+    
+    lat=_convert_to_degress(exif_dict['GPS GPSLatitude'])
+    lon=_convert_to_degress(exif_dict["GPS GPSLongitude"])
     return {
         "lat":lat,
         "long":lon
     }
+
     # for ifd in ("0th", "Exif", "GPS", "1st"):
     # for ifd in ("GPS",):
     #     for tag in exif_dict[ifd]:
@@ -54,6 +67,19 @@ def convert_to_degress(value):
     s0 = value[2][0]
     s1 = value[2][1]
     s = float(s0) / float(s1)
+
+    return d + (m / 60.0) + (s / 3600.0)
+
+def _convert_to_degress(value):
+    """
+    Helper function to convert the GPS coordinates stored in the EXIF to degress in float format
+    :param value:
+    :type value: exifread.utils.Ratio
+    :rtype: float
+    """
+    d = float(value.values[0].num) / float(value.values[0].den)
+    m = float(value.values[1].num) / float(value.values[1].den)
+    s = float(value.values[2].num) / float(value.values[2].den)
 
     return d + (m / 60.0) + (s / 3600.0)
 
