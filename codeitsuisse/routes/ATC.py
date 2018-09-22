@@ -33,6 +33,7 @@ def evaluate_ATC():
 
     delay = 0
     runway_names = data["Static"]["Runways"]
+    runway_names.sort()
     runways = [{"name":"A","occupied":False,"release-time":"0000"}]*len(runway_names)
     for i in range(len(runway_names)):
         runways[i] = {}
