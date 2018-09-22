@@ -5,8 +5,8 @@ from flask import request, jsonify
 from codeitsuisse import app
 
 
-@app.route('/broadcaster/message-broadcast', methods=['POST'])
-def eval_broadcaster():
+@app.route('/broadcaster/most-connected-node', methods=['POST'])
+def eval_broadcast_connected():
     data = request.get_json()
     app.logger.info("data sent for evaluation {}".format(data))
     input_data = data.get("data")
@@ -35,7 +35,7 @@ def leastnodes(data):
             node[rs[1]] = {}
             node[rs[1]]["from"] = [rs[0]]
 
-    # print(node)
+    print(node)
 
     visited = []
     for key in node:
@@ -59,29 +59,18 @@ def leastnodes(data):
 
 def find_mother(node, node_to_check):
     if "from" in node[node_to_check]:
-        # print("finding parent of",node_to_check)
+        print("finding parent of",node_to_check)
         parent_node = node[node_to_check]["from"][0]
         return find_mother(node, parent_node)
     else:
-        # print("parent found! parent is:",node_to_check)
+        print("parent found! parent is:",node_to_check)
         return node_to_check
 
-def remove_children(node, node_to_check, visited):
-    if "to" in node[node_to_check]:
-        for children_node in node[node_to_check]["to"]:
-            # print("visiting children:", children_node)
-            if children_node not in visited:
-                pass
-            else:
-                remove_children(node, children_node, visited)
-        # print("popping",node_to_check)
-        visited.pop(visited.index(node_to_check))
-    else:
-        # print("this is the node to check",node_to_check)
-        # print("this is visited: ",visited)
-        if node_to_check in visited:
-            # print("popping",node_to_check)
-            visited.pop(visited.index(node_to_check))
-        else:
-            # print(node_to_check,"not in loop")
-            pass
+# # WORK IN PROGRESS
+# def count_children(node, node_to_check):
+#     if "to" in node[node_to_check]:
+#         for children_node in node[node_to_check]["to"]:
+#             print("visiting children:", children_node)
+#             count_children(node, children_node)
+#
+#     else:
