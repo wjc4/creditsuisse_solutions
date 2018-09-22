@@ -48,8 +48,11 @@ def evaluate_ATC():
 
     for flight in newlist:
         if("Distressed" in flight and flight["Distressed"]=="true"):
-            distress.append(flight)
             newlist.remove(flight)
+            del flight["Distressed"]
+            distress.append(flight)
+
+
 
     distress+=(newlist)
 
