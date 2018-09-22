@@ -59,20 +59,23 @@ def leastnodes(data):
 
 def find_mother(node, node_to_check):
     if "from" in node[node_to_check]:
-        # print("finding parent of",node_to_check)
+        print("finding parent of",node_to_check)
         parent_node = node[node_to_check]["from"][0]
         return find_mother(node, parent_node)
     else:
-        # print("parent found! parent is:",node_to_check)
+        print("parent found! parent is:",node_to_check)
         return node_to_check
 
 def remove_children(node, node_to_check, visited):
     if "to" in node[node_to_check]:
         for children_node in node[node_to_check]["to"]:
-            # print("visiting children:", children_node)
+            print("visiting children:", children_node)
             remove_children(node, children_node, visited)
-        # print("popping",node_to_check)
+        print("popping",node_to_check)
         visited.pop(visited.index(node_to_check))
     else:
-        # print("popping",node_to_check)
-        visited.pop(visited.index(node_to_check))
+        if node_to_check in visited:
+            print("popping",node_to_check)
+            visited.pop(visited.index(node_to_check))
+        else:
+            pass
