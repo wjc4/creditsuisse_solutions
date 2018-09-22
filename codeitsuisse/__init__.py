@@ -14,6 +14,7 @@ import codeitsuisse.routes.DL
 import codeitsuisse.routes.puzzle
 import codeitsuisse.routes.broadcastmessage
 import codeitsuisse.routes.broadcastconnected
+import codeitsuisse.routes.broadcastfastpath
 import codeitsuisse.routes.skilltree
 import codeitsuisse.routes.dino
 
