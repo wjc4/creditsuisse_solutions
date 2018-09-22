@@ -14,7 +14,7 @@ def evaluate_ATC():
     app.logger.info("data sent for evaluation {}".format(data))
 
     # To return a new list, use the sorted() built-in function...
-    newlist = sorted(data["Flights"], key=lambda x: x["Time"])
+    newlist = sorted(data["Flights"], key=lambda x: (x["Time"],x["PlaneId"]))
 
     RT = int(int(data["Static"]["ReserveTime"])/60)
 
@@ -33,6 +33,7 @@ def evaluate_ATC():
 
     delay = 0
     runway_names = data["Static"]["Runways"]
+    runway_names.sort()
     runways = [{"name":"A","occupied":False,"release-time":"0000"}]*len(runway_names)
     for i in range(len(runway_names)):
         runways[i] = {}
