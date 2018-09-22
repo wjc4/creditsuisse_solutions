@@ -9,6 +9,7 @@ import codeitsuisse.routes.primenumbers
 import codeitsuisse.routes.tallyexpenses
 import codeitsuisse.routes.ATC
 import codeitsuisse.routes.photogps
+import codeitsuisse.routes.hotel
 
 if 'DYNO' in os.environ:
     logFormatter = logging.Formatter("%(asctime)s [%(filename)s] [%(funcName)s] [%(lineno)d] [%(levelname)-5.5s]  %(message)s")
