@@ -1,3 +1,5 @@
+import numpy as np
+
 def printMatrix(M):
     h,w = len(M),len(M[0])
     for y in range(h):
@@ -39,17 +41,57 @@ def addPiece(M,piece,rotate,xpos):
     #pos = left block pos of piece
     profile_h = len(map)
     profile_w = len(map[0])
-    topBlk = getTopBlk(M,xpos)
-    y_marker = topBlk - profile_h
-    x_marker = xpos
+    topBlk = 20
+    for i in range(profile_w):
+        print(xpos+i)
+        topBlk_i = getTopBlk(M,xpos+i)
+        if(topBlk_i<topBlk):
+            topBlk=topBlk_i
 
-    # update map onto tetris map
+    #check if collide, if no continue moving down
+    # if(checkCollide(M,piece,xpos,rotate))
+
+    yLower=topBlk
+    M_new = M
+    i=-1
+    while(max(max(M_new))==1):
+        #move down
+        i=i+1
+        M_map = remap(piece,rotate,xpos,yLower+i)
+        M = np.matrix(M)
+        M_map = np.matrix(M_map)
+        M_new = (M + M_map).tolist()
+
+    M_map = remap(piece,rotate,xpos,yLower+i-1)
+    M = np.matrix(M)
+    M_map = np.matrix(M_map)
+    M = (M + M_map).tolist()
+
+    # y_marker = topBlk - profile_h
+    # x_marker = xpos
+    #
+    # # update map onto tetris map
+    # for y in range(profile_h):
+    #     for x in range(profile_w):
+    #         print(x_marker,x)
+    #         print(y_marker,y)
+    #         M[y_marker + y][x_marker + x] = map[y][x]
+
+    return M
+
+def remap(piece,rotate,xpos,yLower):
+    w, h = 10, 21;
+    M = [[0 for x in range(w)] for y in range(h)]
+    map = getProfile(piece,rotate)
+    profile_h = len(map)
+    profile_w = len(map[0])
+    yLower = yLower - profile_h
+
     for y in range(profile_h):
         for x in range(profile_w):
-            print(x_marker,x)
-            print(y_marker,y)
-            M[y_marker + y][x_marker + x] = map[y][x]
+            M[yLower+y][xpos+x] = map[y][x]
 
+    printMatrix(M)
     return M
 
 def rankRot(M,piece):
@@ -89,7 +131,7 @@ def rankLoc(M,piece,rotate):
     pos = 0
 
     if(con_width==0):
-        for i in range(0,w):
+        for i in range(0,w-1):
             heightScore = getHeightScore(getTopBlk(M,i))
             if(heightScore>maxScore):
                 maxScore = heightScore
@@ -97,7 +139,7 @@ def rankLoc(M,piece,rotate):
 
 
     if(con_width==1):
-        for i in range(0,w-1):
+        for i in range(0,w-2):
             #rel contour (top profile)
             curr_height = getTopBlk(M,i)
             right_height = getTopBlk(M,i+1)
@@ -116,7 +158,7 @@ def rankLoc(M,piece,rotate):
                 pos = i
 
     if(con_width==2):
-        for i in range(0,w-2):
+        for i in range(0,w-3):
             #rel contour (top profile)
             curr_height = getTopBlk(M,i)
             R_height = getTopBlk(M,i+1)
@@ -136,7 +178,7 @@ def rankLoc(M,piece,rotate):
                 pos = i
 
     if(con_width==3):
-        for i in range(0,w-3):
+        for i in range(0,w-4):
             #rel contour (top profile)
             curr_height = getTopBlk(M,i)
             R_height = getTopBlk(M,i+1)
@@ -190,7 +232,7 @@ def getProfile(piece,rotate=0):
         if(rotate == 0 or rotate == 2):
             map = [[1],[1],[1],[1]]
         else:
-            map = [1,1,1,1]
+            map = [[1,1,1,1]]
 
     elif(piece=='S'):
         if(rotate == 0 or rotate == 2):
