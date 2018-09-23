@@ -8,10 +8,10 @@ from codeitsuisse import app
 @app.route('/broadcaster/message-broadcast', methods=['POST'])
 def eval_broadcaster():
     data = request.get_json()
-    app.logger.info("data sent for evaluation {}".format(data))
+    # app.logger.info("data sent for evaluation {}".format(data))
     input_data = data.get("data")
     result = leastnodes(input_data)
-    app.logger.info("My result :{}".format(result))
+    # app.logger.info("My result :{}".format(result))
     return jsonify(result)
 
 def leastnodes(data):

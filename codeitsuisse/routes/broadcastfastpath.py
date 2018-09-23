@@ -25,7 +25,7 @@ def eval_broadcast_fastpath():
     result = {
         "result": result_input
     }
-    app.logger.info("My result :{}".format(result))
+    # app.logger.info("My result :{}".format(result))
     return jsonify(result)
 
 def fastpath(data,start,dst):
