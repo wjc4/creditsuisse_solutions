@@ -18,64 +18,64 @@ def tetris_evaluate():
 
     n = len(seq)
 
-    # if('I' not in seq and 'J' not in seq):
-    #     # # challenge 1
-    #     for i in range(n):
-    #         shift = (i%5)* 2
-    #         actions.append(shift)
-    #
-    # elif('I' not in seq and 'O' not in seq):
-    #     # challenge 2
-    #     J_count = 0
-    #     L_count = 0
-    #     for i in range(n):
-    #         rotate = 0
-    #         shift = 0
-    #         if(seq[i]=="L"):
-    #             if(int(L_count/3)%2==0):
-    #                 shift = L_count%3 * 2
-    #             else:
-    #                 rotate = 2
-    #                 shift = L_count%3 * 2
-    #             L_count += 1
-    #         else:
-    #             offset = 6
-    #             if(int(J_count/2)%2==0):
-    #                 shift = (J_count%2 * 2) + offset
-    #             else:
-    #                 rotate = 2
-    #                 shift = (J_count%2 * 2) + offset
-    #             J_count+=1
-    #
-    #         if(rotate!=0):
-    #             actions.append(int(str(rotate)+str(shift)))
-    #         else:
-    #             actions.append(shift)
-    #
-    # elif('J' not in seq and 'L' not in seq):
-    #     #challenge 3
-    #     O_count = 0
-    #     I_count = 0
-    #     for i in range(n):
-    #         rotate = 0
-    #         shift = 0
-    #         if(seq[i]=="O"):
-    #             shift = O_count%3 * 2
-    #             O_count += 1
-    #         else:
-    #             offset = 6
-    #             if(int(I_count/4)%2 ==0):
-    #                 shift = (I_count%4 * 1) + offset
-    #             else:
-    #                 shift = (I_count%4 * 1) + offset
-    #             I_count+=1
-    #
-    #         if(rotate!=0):
-    #             actions.append(int(str(rotate)+str(shift)))
-    #         else:
-    #             actions.append(shift)
+    if('I' not in seq and 'J' not in seq):
+        # # challenge 1
+        for i in range(n):
+            shift = (i%5)* 2
+            actions.append(shift)
 
-    ####################################
+    elif('I' not in seq and 'O' not in seq):
+        # challenge 2
+        J_count = 0
+        L_count = 0
+        for i in range(n):
+            rotate = 0
+            shift = 0
+            if(seq[i]=="L"):
+                if(int(L_count/3)%2==0):
+                    shift = L_count%3 * 2
+                else:
+                    rotate = 2
+                    shift = L_count%3 * 2
+                L_count += 1
+            else:
+                offset = 6
+                if(int(J_count/2)%2==0):
+                    shift = (J_count%2 * 2) + offset
+                else:
+                    rotate = 2
+                    shift = (J_count%2 * 2) + offset
+                J_count+=1
+
+            if(rotate!=0):
+                actions.append(int(str(rotate)+str(shift)))
+            else:
+                actions.append(shift)
+
+    elif('J' not in seq and 'L' not in seq):
+        #challenge 3
+        O_count = 0
+        I_count = 0
+        for i in range(n):
+            rotate = 0
+            shift = 0
+            if(seq[i]=="O"):
+                shift = O_count%3 * 2
+                O_count += 1
+            else:
+                offset = 6
+                if(int(I_count/4)%2 ==0):
+                    shift = (I_count%4 * 1) + offset
+                else:
+                    shift = (I_count%4 * 1) + offset
+                I_count+=1
+
+            if(rotate!=0):
+                actions.append(int(str(rotate)+str(shift)))
+            else:
+                actions.append(shift)
+
+    ###################################
 
     # Initialise matrix
     # Floor is made of blocks as well
