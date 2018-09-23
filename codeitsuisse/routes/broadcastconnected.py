@@ -91,7 +91,7 @@ def most_connections(data):
         sorted_fanswers = sorted(final_answers, key=lambda x: x[0])
         return sorted_fanswers[0][0]
 
- def count_children(node,node_to_check):
+def count_children(node,node_to_check):
     if "to" in node[node_to_check]:
         for child in node[node_to_check]["to"]:
             plusone()
@@ -99,10 +99,10 @@ def most_connections(data):
     else:
         pass
 
- def plusone():
+def plusone():
     global count
     count += 1
- def reset():
+def reset():
     global count
     count = 0
 
