@@ -10,13 +10,13 @@ count = 0
 @app.route('/broadcaster/most-connected-node', methods=['POST'])
 def eval_broadcast_connected():
     data = request.get_json()
-    # app.logger.info("data sent for evaluation {}".format(data))
+    app.logger.info("CONNECTED NODES TEST CASE {}".format(data))
     input_data = data.get("data")
     result_input = most_connections(input_data)
     result = {
         "result": result_input
     }
-    app.logger.info("My result :{}".format(result))
+    app.logger.info("-----------\n\nMy result ISSSS:{}".format(result))
     return jsonify(result)
 
 def most_connections(data):
