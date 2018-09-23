@@ -31,13 +31,13 @@ def tetris_evaluate2():
     # table = []
     # for i in range(20):
     #   table.append(row)
-    print(table)
+    # print(table)
     # print([len(col) for col in table])
     res = []
     for i in range(n):
         piece = seq[i]
         score = calc(table,piece)
-        print(score)
+        # print(score)
         move = max(score, key=operator.itemgetter('points'))
         res.append(move['action'])
         table = move['table']
@@ -110,7 +110,7 @@ def calc(table,piece):
                 newtable[i+j].append(1)
             score.append({
                 'points':calc_score(newtable),
-                'action':i,
+                'action':10+i,
                 'table': newtable
             })
 
