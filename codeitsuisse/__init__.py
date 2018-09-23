@@ -12,7 +12,7 @@ import codeitsuisse.routes.photogps
 import codeitsuisse.routes.hotel
 import codeitsuisse.routes.DL
 import codeitsuisse.routes.puzzle
-import codeitsuisse.routes.tetris
+import codeitsuisse.routes.tetriswj
 import codeitsuisse.routes.broadcastmessage
 import codeitsuisse.routes.broadcastconnected
 import codeitsuisse.routes.broadcastfastpath
