@@ -113,6 +113,120 @@ def calc(table,piece):
                 'action':10+i,
                 'table': newtable
             })
+    if piece == 'J':
+        for i in range(9):
+            newtable=copy.deepcopy(table)
+            to_cmp = [len(newtable[i]),len(newtable[i+1])]
+            top = max(to_cmp)
+            for j in range(2):
+                while(len(newtable[i+j])<top):
+                    newtable[i+j].append(0)
+                newtable[i+j].append(1)
+            newtable[i+1].append(1)
+            newtable[i+1].append(1)
+            score.append({
+                'points':calc_score(newtable),
+                'action':i,
+                'table': newtable
+            })
+        for i in range(8):
+            newtable=copy.deepcopy(table)
+            to_cmp = [len(newtable[i]),len(newtable[i+1]),len(newtable[i+2])]
+            top = max(to_cmp)
+            for j in range(3):
+                while(len(newtable[i+j])<top):
+                    newtable[i+j].append(0)
+                newtable[i+j].append(1)
+            newtable[i].append(1)
+            score.append({
+                'points':calc_score(newtable),
+                'action':10+i,
+                'table': newtable
+            })
+        for i in range(9):
+            newtable=copy.deepcopy(table)
+            if len(newtable[i])+2 == len(newtable[i+1]):
+                newtable[i].append(1)
+                newtable[i].append(1)
+                newtable[i].append(1)
+                newtable[i+1].append(1)
+            if len(newtable[i])+2 > len(newtable[i+1]):
+                while(len(newtable[i+j])<len(newtable[i])+2):
+                    newtable[i+1].append(0)
+                newtable[i].append(1)
+                newtable[i].append(1)
+                newtable[i].append(1)
+                newtable[i+1].append(1)
+            if len(newtable[i])+2 < len(newtable[i+1]):
+                while(len(newtable[i])+2<len(newtable[i])):
+                    newtable[i].append(0)
+                newtable[i].append(1)
+                newtable[i].append(1)
+                newtable[i].append(1)
+                newtable[i+1].append(1)
+            score.append({
+                'points':calc_score(newtable),
+                'action':20+i,
+                'table': newtable
+            })
+    
+    if piece == 'L':
+        for i in range(9):
+            newtable=copy.deepcopy(table)
+            to_cmp = [len(newtable[i]),len(newtable[i+1])]
+            top = max(to_cmp)
+            for j in range(2):
+                while(len(newtable[i+j])<top):
+                    newtable[i+j].append(0)
+                newtable[i+j].append(1)
+            newtable[1].append(1)
+            newtable[1].append(1)
+            score.append({
+                'points':calc_score(newtable),
+                'action':i,
+                'table': newtable
+            })
+        for i in range(8):
+            newtable=copy.deepcopy(table)
+            to_cmp = [len(newtable[i]),len(newtable[i+1]),len(newtable[i+2])]
+            top = max(to_cmp)
+            for j in range(3):
+                while(len(newtable[i+j])<top):
+                    newtable[i+j].append(0)
+                newtable[i+j].append(1)
+            newtable[i+1].append(1)
+            score.append({
+                'points':calc_score(newtable),
+                'action':30+i,
+                'table': newtable
+            })
+        for i in range(9):
+            newtable=copy.deepcopy(table)
+            if len(newtable[i]) == len(newtable[i+1])+2:
+                newtable[i].append(1)
+                newtable[i+1].append(1)
+                newtable[i+1].append(1)
+                newtable[i+1].append(1)
+            if len(newtable[i]) > len(newtable[i+1])+2:
+                while(len(newtable[i+j])<len(newtable[i])+2):
+                    newtable[i].append(0)
+                newtable[i].append(1)
+                newtable[i+1].append(1)
+                newtable[i+1].append(1)
+                newtable[i+1].append(1)
+            if len(newtable[i]) < len(newtable[i+1])+2:
+                while(len(newtable[i])<len(newtable[i])+2):
+                    newtable[i+1].append(0)
+                newtable[i].append(1)
+                newtable[i].append(1)
+                newtable[i].append(1)
+                newtable[i+1].append(1)
+            score.append({
+                'points':calc_score(newtable),
+                'action':20+i,
+                'table': newtable
+            })
+
 
 
     return score
