@@ -62,7 +62,7 @@ def most_connections(data):
             final_answers.append(sorted_answers[i])
 
     # sort by alphabetical order
-    if len(final_answers)==0:
+    if len(final_answers)==1:
         return final_answers[0][0]
     else:
         sorted_fanswers = sorted(final_answers, key=lambda x: x[0])
